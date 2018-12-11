@@ -17,13 +17,13 @@ setcookie("cEmail", $_POST['cEmail']);
     <h2>Seminars</h2>
     <?php
     if (isset($_COOKIE['attendeeID'])) {
-        $internID = $_REQUEST['attendeeID'];
+        $attendeeID = $_REQUEST['attendeeID'];
     }
     else {
-        $internID = -1;
+        $sttendeeID = -1;
     }
     // debug
-    echo "\$internID:" . $_COOKIE['attendeeID'] . "\n";
+    echo "\$attendeeID:" . $_COOKIE['attendeeID'] . "\n";
     $errors = 0;
     $hostname = "localhost";
     $username = "adminer";
@@ -51,7 +51,7 @@ setcookie("cEmail", $_POST['cEmail']);
     $TableName = "attendees";
     if ($errors == 0) {
         $SQLstring = "SELECT * FROM $TableName" . 
-            " WHERE internID='" . $_COOKIE['attendeeID'] ."'";
+            " WHERE attendeeid='" . $_COOKIE['attendeeID'] ."'";
         $queryResult = mysqli_query($DBConnect, $SQLstring);
         if (!$queryResult) {
             ++$errors;
@@ -69,7 +69,7 @@ setcookie("cEmail", $_POST['cEmail']);
         $attendeeName = $row['first'] . " " . $row['last'];
     }
     else {
-        $internName = "";
+        $attendeeName = "";
     }
     // debug
     echo "\$internName: $attendeeName";
@@ -77,39 +77,38 @@ setcookie("cEmail", $_POST['cEmail']);
     if ($errors == 0){
         $SQLstring = "SELECT count(seminarid)" .
             " FROM $TableName" .
-            " WHERE internID='" . $_COOKIE['attendeeID'] ."'" .
-            " AND dateApproved IS NOT NULL";
+            " WHERE attendeeID='" . $_COOKIE['attendeeID'] ."'";
         $queryResult = mysqli_query($DBConnect, $SQLstring);
         if (mysqli_num_rows($queryResult) > 0) {
             $row = mysqli_fetch_row($queryResult);
-            $approvedOpportunities = $row[0];
+            $confirmedSeminars = $row[0];
             mysqli_free_result($queryResult);
         }
     }
     if ($errors == 0) {
-        $selectedOpportunities = array();
-        $SQLstring = "SELECT seminarID FROM $TableName" . 
-            " WHERE attendeeID='" . $_COOKIE['attendeeID'] . "'";
+        $selectedSeminars = array();
+        $SQLstring = "SELECT seminarid FROM $TableName" . 
+            " WHERE attendeeid='" . $_COOKIE['attendeeID'] . "'";
         $queryResult = mysqli_query($DBConnect,$SQLstring);
          if (mysqli_num_rows($queryResult) > 0) {
             while (($row = mysqli_fetch_row($queryResult)) != false) {
-                $selectedOpportunities[] = $row[0];
+                $selectedSeminars[] = $row[0];
             }
             mysqli_free_result($queryResult);
         }
-        $assignedOpportunities = array();
-        $SQLstring = "SELECT opportunityID FROM $TableName" . 
-            " WHERE attendeeID='" . $_COOKIE['attendeeID'] . "'";
+        $confirmedSeminar = array();
+        $SQLstring = "SELECT seminarid FROM $TableName" . 
+            " WHERE attendeeid='" . $_COOKIE['attendeeID'] . "'";
         $queryResult = mysqli_query($DBConnect,$SQLstring);
          if (mysqli_num_rows($queryResult) > 0) {
             while (($row = mysqli_fetch_row($queryResult)) != false) {
-                $assignedOpportunities[] = $row[0];
+                $confirmedSeminars[] = $row[0];
             }
             mysqli_free_result($queryResult);
         }
     }
     $TableName = "seminar";
-    $opportunities = array();
+    $seminars= array();
     if ($errors == 0) {
         $SQLstring = "SELECT  FROM $TableName";
         $queryResult = mysqli_query($DBConnect, $SQLstring);        
@@ -134,7 +133,6 @@ setcookie("cEmail", $_POST['cEmail']);
     echo "<th style='background-color:cyan'>Seminar</th>\n";
     echo "<th style='background-color:cyan'>Description</th>\n";
     echo "</tr>\n";
-    
     foreach ($seminars as $seminar) {
         if (!in_array($opportunity['opportunityID'], $assignedOpportunities)){
         echo "<tr>\n";
