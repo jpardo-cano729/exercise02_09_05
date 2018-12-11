@@ -14,7 +14,7 @@ setcookie("cEmail", $_POST['cEmail']);
 </head>
 
 <body>
-    <h1>Seminars</h1>
+    <h2>Seminars</h2>
     <?php
     if (isset($_COOKIE['attendeeID'])) {
         $internID = $_REQUEST['attendeeID'];
@@ -88,8 +88,8 @@ setcookie("cEmail", $_POST['cEmail']);
     }
     if ($errors == 0) {
         $selectedOpportunities = array();
-        $SQLstring = "SELECT seminarid FROM $TableName" . 
-            " WHERE internID='" . $_COOKIE['attendeeID'] . "'";
+        $SQLstring = "SELECT seminarID FROM $TableName" . 
+            " WHERE attendeeID='" . $_COOKIE['attendeeID'] . "'";
         $queryResult = mysqli_query($DBConnect,$SQLstring);
          if (mysqli_num_rows($queryResult) > 0) {
             while (($row = mysqli_fetch_row($queryResult)) != false) {
@@ -99,7 +99,7 @@ setcookie("cEmail", $_POST['cEmail']);
         }
         $assignedOpportunities = array();
         $SQLstring = "SELECT opportunityID FROM $TableName" . 
-            " WHERE internID='" . $_COOKIE['attendeeID'] . "'" . " AND dateApproved IS NOT NULL";
+            " WHERE attendeeID='" . $_COOKIE['attendeeID'] . "'";
         $queryResult = mysqli_query($DBConnect,$SQLstring);
          if (mysqli_num_rows($queryResult) > 0) {
             while (($row = mysqli_fetch_row($queryResult)) != false) {
@@ -115,7 +115,7 @@ setcookie("cEmail", $_POST['cEmail']);
         $queryResult = mysqli_query($DBConnect, $SQLstring);        
           if (mysqli_num_rows($queryResult) > 0) {
             while (($row = mysqli_fetch_assoc($queryResult)) != false) {
-                $opportunities[] = $row;
+                $seminars[] = $row;
             }
             mysqli_free_result($queryResult);
         }
@@ -125,23 +125,23 @@ setcookie("cEmail", $_POST['cEmail']);
         mysqli_close($DBConnect);
     }
     if (!empty($lastRequestDate)){
-        echo "<p>You last requested an internship" . 
+        echo "<p>You last requested an Seminar" . 
             " opportunity on $lastRequestDate.</p>\n";
     }
+    
     echo "<table border='1' width='100%'>\n";
     echo "<tr>\n";
     echo "<th style='background-color:cyan'>Seminar</th>\n";
     echo "<th style='background-color:cyan'>Description</th>\n";
     echo "</tr>\n";
-    foreach ($opportunities as $opportunity) {
+    
+    foreach ($seminars as $seminar) {
         if (!in_array($opportunity['opportunityID'], $assignedOpportunities)){
         echo "<tr>\n";
-        echo "<td>" . htmlentities($opportunity['company']) . "</td>\n";
-        echo "<td>" . htmlentities($opportunity['city']) . "</td>\n";
-        echo "<td>" . htmlentities($opportunity['startDate']) . "</td>\n";
-        echo "<td>" . htmlentities($opportunity['endDate']) . "</td>\n";
-        echo "<td>" . htmlentities($opportunity['position']) . "</td>\n";
-        echo "<td>" . htmlentities($opportunity['description']) . "</td>\n";
+        echo "<td>" . htmlentities($seminar['seminarID']) . "</td>\n";
+        echo "<td>" . htmlentities($seminar['seminarName']) . "</td>\n";
+        echo "<td>" . htmlentities($seminar['description']) . "</td>\n";
+        echo "<td>" . htmlentities($seminar['endDate']) . "</td>\n";
         echo "<td>";
         if (in_array($opportunity['opportunityID'], $selectedOpportunities)){
             echo "Selected";
